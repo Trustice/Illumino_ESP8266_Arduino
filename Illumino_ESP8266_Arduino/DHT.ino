@@ -18,24 +18,26 @@ DHT dht(PIN_DHT, DHTTYPE);
 void dhtSetup() {
   Serial.println(PIN_DHT);
   dht.begin();
+  sendDHTdata(dht_temp_uuid, dhtReadTemp());
+  sendDHTdata(dht_humid_uuid, dhtReadHumidity());
 }
 
 long dhtLastUpdate = 0;
 void dhtUpdate() {
-  if (millis() - dhtLastUpdate >= 10000){
-    sendDHTdata(dht_humid_uuid, dhtReadTemp());
+  if (millis() - dhtLastUpdate >= DHT_INTERVAL){
+    sendDHTdata(dht_temp_uuid, dhtReadTemp());
+    sendDHTdata(dht_humid_uuid, dhtReadHumidity());
     dhtLastUpdate = millis();
   }
 }
 
 float dhtReadTemp() {
   float t = dht.readTemperature();
-  Serial.println(t);
 
   // Check if any reads failed and exit early (to try again).
   if (isnan(t)){
     Serial.println("Failed to read from DHT sensor!");
-    return 99;
+    //return 99;
   }
   return t;
 }
@@ -46,7 +48,7 @@ float dhtReadHumidity() {
   // Check if any reads failed and exit early (to try again).
   if (isnan(h)){
     Serial.println("Failed to read from DHT sensor!");
-    return 99;
+    //return 99;
   }
   return h;
 }

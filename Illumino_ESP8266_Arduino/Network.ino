@@ -154,42 +154,44 @@ void listenWebServer() {
 }
 
 void sendDHTdata(const char uuid[38], float value) {
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println(value);
-    HTTPClient http;
-    char url[128];
-//    strcpy(url, "http://192.168.178.27/middleware.php/data/");
-//    strcat(url, uuid);
-//    strcat(url, ".json?operation=add&value=");
-    char value_str [8];
-    sprintf(value_str, "%f", value);
-    Serial.println(value_str);
-    sprintf(url, "http://192.168.178.27/middleware.php/data/%s.json?operation=add&value=%f", uuid, value);
-//    strcat(url, value_str);
+  if ((WiFi.status() == WL_CONNECTED) && !(isnan(value))) {
+    Serial.println("[DHT] send data");
     
+    HTTPClient http;
+
+    char value_str [8];
+    dtostrf(value, 3, 2, value_str);
+    Serial.println(value_str);
+    
+    char url[128];
+    sprintf(url, "http://192.168.178.27/middleware.php/data/%s.json?operation=add&value=%s", uuid, value_str);
+    Serial.print("[DHT] ");
     Serial.println(url);
-    //http.begin("http://192.168.178.27/middleware.php/data/a46a83a0-4607-11e6-8b78-8923a31a1383.json?operation=add&value=50"); //HTTP
+
     http.begin(url);
-    Serial.print("[HTTP] GET...\n");
+
     // start connection and send HTTP header
     int httpCode = http.GET();
 
     // httpCode will be negative on error
     if(httpCode > 0) {
         // HTTP header has been send and Server response header has been handled
-        Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+        Serial.printf("[DHT] done... code: %d\n", httpCode);
 
         // file found at server
-        if(httpCode == HTTP_CODE_OK) {
-            String payload = http.getString();
-            Serial.println(payload);
-        }
+//        if(httpCode == HTTP_CODE_OK) {
+//            String payload = http.getString();
+//            Serial.println(payload);
+//        }
     } else {
-        Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+        Serial.printf("[DHT] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
     }
 
     http.end();
     
+  }
+  else {
+    Serial.println(value);
   }
 }
 #endif
