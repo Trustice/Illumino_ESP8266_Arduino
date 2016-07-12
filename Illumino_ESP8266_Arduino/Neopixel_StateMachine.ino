@@ -67,7 +67,8 @@ char * handlePreviousState(unsigned long value) {
       strcpy(r, "S");
       break;
     default:
-      strcpy(r, "ERR_StateMachine:");
+      strcpy(r, "ERR_StateMachine");
+      return r;
       break;
   }  // end of switch
 
@@ -108,14 +109,16 @@ char * getInfo(unsigned long value) {
     case GOT_S:
       sprintf(r, "S%d", Stripe.TotalSteps);
       break;
-    //    case GOT_T:
-    //      Serial.print(F("T"));
-    //      Serial.print(dht_read_temp());
-    //      break;
-    //    case GOT_H:
-    //      Serial.print(F("H"));
-    //      Serial.print(dht_read_humidity());
-    //      break;
+    case GOT_T:
+      char value_str[8];
+      dtostrf(dhtReadTemp(), 3, 2, value_str);
+      sprintf(r, "T%s", value_str);
+      break;
+    case GOT_H:
+      value_str[8];
+      dtostrf(dhtReadHumidity(), 3, 2, value_str);
+      sprintf(r, "H%s", value_str);
+      break;
     default:
       strcpy(r, "N/A");
       break;

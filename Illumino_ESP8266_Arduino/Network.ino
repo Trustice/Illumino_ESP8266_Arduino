@@ -155,19 +155,17 @@ void listenWebServer() {
 
 void sendDHTdata(const char uuid[38], float value) {
   if ((WiFi.status() == WL_CONNECTED) && !(isnan(value))) {
-    Serial.println("[DHT] send data");
+    Serial.print("[DHT] send: ");
     
     HTTPClient http;
 
     char value_str [8];
     dtostrf(value, 3, 2, value_str);
-    Serial.println(value_str);
     
     char url[128];
     sprintf(url, "http://192.168.178.27/middleware.php/data/%s.json?operation=add&value=%s", uuid, value_str);
-    Serial.print("[DHT] ");
-    Serial.println(url);
-
+    //Serial.print(url);
+    Serial.print(value_str);
     http.begin(url);
 
     // start connection and send HTTP header
@@ -176,21 +174,16 @@ void sendDHTdata(const char uuid[38], float value) {
     // httpCode will be negative on error
     if(httpCode > 0) {
         // HTTP header has been send and Server response header has been handled
-        Serial.printf("[DHT] done... code: %d\n", httpCode);
-
-        // file found at server
-//        if(httpCode == HTTP_CODE_OK) {
-//            String payload = http.getString();
-//            Serial.println(payload);
-//        }
+        Serial.printf(" *** PASS... code: %d\n", httpCode);
     } else {
-        Serial.printf("[DHT] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+        Serial.printf(" *** FAIL, error: %s\n", http.errorToString(httpCode).c_str());
     }
 
     http.end();
     
   }
   else {
+    Serial.print("[DHT] error value: ");
     Serial.println(value);
   }
 }
