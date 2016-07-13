@@ -25,10 +25,14 @@ void dhtSetup() {
 long dhtLastUpdate = 0;
 void dhtUpdate() {
   if (millis() - dhtLastUpdate >= DHT_INTERVAL){
-    sendDHTdata(dht_temp_uuid, dhtReadTemp());
-    sendDHTdata(dht_humid_uuid, dhtReadHumidity());
-    dhtLastUpdate = millis();
+    dhtSend();
   }
+}
+
+void dhtSend() {
+  sendDHTdata(dht_temp_uuid, dhtReadTemp());
+  sendDHTdata(dht_humid_uuid, dhtReadHumidity());
+  dhtLastUpdate = millis();
 }
 
 float dhtReadTemp() {

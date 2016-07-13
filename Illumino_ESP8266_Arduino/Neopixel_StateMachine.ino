@@ -113,6 +113,7 @@ char * getInfo(unsigned long value) {
       char value_str[8];
       dtostrf(dhtReadTemp(), 3, 2, value_str);
       sprintf(r, "T%s", value_str);
+      dhtSend();
       break;
     case GOT_H:
       value_str[8];
